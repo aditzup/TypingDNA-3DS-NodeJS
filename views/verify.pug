@@ -1,0 +1,73 @@
+extends layout
+block content
+  div.container(style={"padding":"0"})
+    div.step(id="collect", style={"display":"inline", "opacity":1})
+        include ./flash
+                p
+                    if attempts < 1
+                        h2 Safe Bank
+                    else
+                        h2 First check failed. Let's try one more time...
+                p 
+                    p <b> Secure online transaction </b>
+                <hr style="margin-top: 0.5em;">
+                p Important: To proceed with this purchase, enter the code received by SMS  in the OTP field and enter the passphrase in the passphrase field. 
+                <hr style="margin-top: 0.5em;">
+                br
+                h5 
+                    p Merchant Name: <b>ABC Merchant</b>
+                    p Amount: <b>10.00 GBP</b>
+                    p Date: <b>11/11/2019</b>
+                    p Card Number: <b>XXXX-XXXX-XXXX-1234</b>
+                    p Mobile number: <b>4432-XXXX-1234</b>
+                    
+                    
+                    form(method="POST" onsubmit="return verifyText(this)")
+                        textarea.form-control(rows="1", cols="100", id="F", name="SMS",  placeholder="Enter one-time passcode here")
+                        br
+                        
+                        span.highlighted(id="pA1H")
+                        span(id="pA1")
+                        textarea.form-control(rows="1", cols="100", id="inputtextbox", name="inputtextbox", oncopy="return false", onpaste="return false", onkeyup="highlight('pA1H','pA1', this)", placeholder="Type the text loaded above")
+                        input(type="hidden" name="session_id", value=sid)
+                        input(type="hidden" name="tp")
+                        if attempts !== null
+                            input(type="hidden" name="attempts" value=attempts)
+                        br
+                        div
+                            button.btn.btn-colors.btn-s.disabled(role="button", id="btn_next", type="submit")
+                                b Next step
+    //Mobile device detected
+    div.step(id="mobile")
+      p
+          h4 Unsupported mobile device
+      div.message
+          p We're sorry but your mobile device is not supported yet.
+    div.step(id="step_loading")
+        br
+        p Loading...
+  script.
+    tdna = new TypingDNA(); /** creates an instance of the TypingDNA typing pattern recording class */
+    tdna.start(); /** starts the recording of a new typing pattern, will call tdna.reset() to reset later */
+    var currentQuote = ''; /** the text to be typed at a each step, to be set independently */
+
+    /*****************************************************
+    * shows the first step of verification (1 of max 2),
+    * self executed at start
+    *****************************************************/
+    (function() {
+        currentTypeArea = document.getElementById('inputtextbox');
+        currentQuote = '!{currentQuote.replace(/'/g, "\\'")}';
+        highlight('pA1H', 'pA1');
+        currentTypeArea.focus();
+        if(!isIframe()){
+            var note = document.getElementById('note');
+            if(note) {
+                note.style.display = 'block';
+            }
+        }
+    })();
+
+    /** checks if Enter is pressed on text forms and calls the next function */
+    initControls();
+
